@@ -1,0 +1,5 @@
+#
+# Holycode
+#
+holycode:
+  businessPlaceApi: "https://storage.googleapis.com/coding-session-rest-api/"
