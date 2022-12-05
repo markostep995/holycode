@@ -1,5 +1,6 @@
 package com.business.holycode.controller;
 
+import com.business.holycode.dto.BusinessPlaceDto;
 import com.business.holycode.service.BusinessPlaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,15 +11,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/business")
+@RequestMapping("/api/businessPlace")
 public class BusinessPlaceController {
 
     @Autowired
     private BusinessPlaceService businessPlaceService;
 
     @GetMapping("{id}")
-    public void findById(@PathVariable final String id){
-        businessPlaceService.findById(id);
+    public BusinessPlaceDto findById(@PathVariable final String id){
+        return businessPlaceService.findById(id);
     }
 
 }
