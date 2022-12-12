@@ -16,4 +16,6 @@ public class BusinessPlaceDto {
     String address;
 
     ArrayList<DayDto> dayList;
+
+    boolean open;
 }

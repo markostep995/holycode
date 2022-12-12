@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 @Service
@@ -43,7 +46,37 @@ public class BusinessPlaceService {
                 .name(businessPlace.getName())
                 .address(businessPlace.getAddress())
                 .dayList(businessPlace.getDayList())
+                .open(isBusinessPlaceOpen(businessPlace))
                 .build();
+    }
+
+    private boolean isBusinessPlaceOpen(BusinessPlace businessPlace) {
+        LocalDateTime ldt = LocalDateTime.now().plusDays(1).plusHours(5);
+        String currentDayString = ldt.getDayOfWeek().name();
+
+        ArrayList<Day> daysInWeek = createListOfDaysInWeek(businessPlace.getOpeningHours().getWeek());
+
+        for (Day day : daysInWeek){
+            if (day.getName().equalsIgnoreCase(currentDayString)){
+                if (day.getShifts() == null) return false;
+                for (Shift shift : day.getShifts()) {
+                    LocalTime openingTime = LocalTime.parse(shift.getStart());
+                    LocalTime closingTime = LocalTime.parse(shift.getEnd());
+                    //if it's closed at 00:00 or after
+                    if (openingTime.isAfter(closingTime)){
+                        if ((openingTime.isBefore(ldt.toLocalTime()) || openingTime.equals(ldt.toLocalTime())) && closingTime.isBefore(ldt.toLocalTime())){
+                            return true;
+                        }
+                    } else  {
+                        if ((openingTime.isBefore(ldt.toLocalTime()) || openingTime.equals(ldt.toLocalTime())) && closingTime.isAfter(ldt.toLocalTime())){
+                            return true;
+                        }
+                    }
+
+                }
+            }
+        }
+        return false;
     }
 
     private void groupDaysWithSameOpeningHours(BusinessPlace businessPlace) {
